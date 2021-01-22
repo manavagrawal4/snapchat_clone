@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">snapchat clone</string>
+    <string name="title_snaps">snaps</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_camera">Camera</string>
+    <string name="title_gallery">gallery</string>
+</resources>
