@@ -2,16 +2,16 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
        <item android:state_enabled="true" android:state_focused="true">
            <shape android:shape="rectangle">
-               <solid android:color="@android:color/white"></solid>
+               <solid android:color="@color/GREEN"></solid>
                <corners android:radius="10dp"></corners>
                <stroke android:color="@color/colorPrimary" android:width="2dp"></stroke>
            </shape>
        </item>
     <item android:state_enabled="true">
         <shape android:shape="rectangle">
-            <solid android:color="@android:color/white"></solid>
+            <solid android:color="@color/cardview_light_background"></solid>
             <corners android:radius="10dp"></corners>
-            <stroke android:color="@android:color/darker_gray" android:width="2dp"></stroke>
+            <stroke android:color="@color/GREEN" android:width="2dp"></stroke>
         </shape>
     </item>
 </selector>

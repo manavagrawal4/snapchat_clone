@@ -25,35 +25,43 @@ public class SignUpActivity extends AppCompatActivity {
     TextView editTextEmail,editTextPassword,editTextFullName,editTextLastName;
     public void logIn(){
         //move to another activity
-        Intent goToSnap=new Intent(this,SnapActivity.class);
+        Intent goToSnap=new Intent(this,SnapHomeActivity.class);
         startActivity(goToSnap);
 
 
     }
 
     public void signUpClicked(View view){
-        
-        // SignUp
-                               mAuth.createUserWithEmailAndPassword(editTextEmail.getText().toString(), editTextPassword.getText().toString())
-                                        .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                                if (task.isSuccessful()) {
-                                                    Map map=new HashMap<>();
-                                                    map.put("email",editTextEmail.getText().toString());
-                                                    map.put("First Name",editTextFullName.getText().toString());
-                                                    map.put("Last Name",editTextLastName.getText().toString());
-                                                    FirebaseDatabase.getInstance().getReference().child("users").child(task.getResult().getUser().getUid()).setValue(map);
-                                                    Toast.makeText(SignUpActivity.this, "signup", Toast.LENGTH_SHORT).show();
-                                                    logIn();
-                                                } else {
-                                                    // If sign in fails, display a message to the user.
-                                                    Toast.makeText(SignUpActivity.this, "signup failed", Toast.LENGTH_SHORT).show();
-                                                }
 
-                                                // ...
-                                            }
-                                        });
+        if(editTextEmail.getText().toString().equals("")||editTextFullName.getText().toString().equals("")||editTextLastName.getText().toString().equals("")||editTextPassword.getText().toString().equals(""))
+        {
+            Toast.makeText(this, "blank field", Toast.LENGTH_SHORT).show();
+        }
+        else {
+
+
+            // SignUp
+            mAuth.createUserWithEmailAndPassword(editTextEmail.getText().toString(), editTextPassword.getText().toString())
+                    .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Map map = new HashMap<>();
+                                map.put("email", editTextEmail.getText().toString());
+                                map.put("First Name", editTextFullName.getText().toString());
+                                map.put("Last Name", editTextLastName.getText().toString());
+                                FirebaseDatabase.getInstance().getReference().child("users").child(task.getResult().getUser().getUid()).setValue(map);
+                                Toast.makeText(SignUpActivity.this, "signup", Toast.LENGTH_SHORT).show();
+                                logIn();
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Toast.makeText(SignUpActivity.this, "signup failed/Incorrect email", Toast.LENGTH_SHORT).show();
+                            }
+
+                            // ...
+                        }
+                    });
+        }
 
     }
 

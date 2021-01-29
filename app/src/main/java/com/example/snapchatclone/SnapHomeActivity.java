@@ -2,53 +2,42 @@ package com.example.snapchatclone;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,12 +45,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class SnapActivity extends AppCompatActivity {
-    /*FirebaseAuth mAuth;
+public class SnapHomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+     private DrawerLayout drawer;
+    FirebaseAuth mAuth;
     ArrayList<DataSnapshot> snaps=new ArrayList<>();
     private ArrayList<CustomItem> customList;
     private RecyclerView mRecyclerView;
-    TextView noSnapTextView;
+    TextView noSnapTextView,headerName,headerEmail;
     private CustomAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     GoogleSignInClient mGoogleSignInClient;
@@ -77,9 +68,9 @@ public class SnapActivity extends AppCompatActivity {
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
-                imageFileName,  *//* prefix *//*
-                ".jpg",         *//* suffix *//*
-                storageDir      *//* directory *//*
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
         );
 
         // Save a file: path for use with ACTION_VIEW intents
@@ -104,7 +95,7 @@ public class SnapActivity extends AppCompatActivity {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(SnapActivity.this, "com.example.snapchatclone.fileprovider",photoFile);
+                Uri photoURI = FileProvider.getUriForFile(SnapHomeActivity.this, "com.example.snapchatclone.fileprovider",photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
@@ -147,7 +138,7 @@ public class SnapActivity extends AppCompatActivity {
             @Override
             public void onItemClick(int position) {
                 DataSnapshot snapshot=snaps.get(position);
-                Intent intent=new Intent(SnapActivity.this,SnapViewActivity.class);
+                Intent intent=new Intent(SnapHomeActivity.this,SnapViewActivity.class);
                 intent.putExtra("imageName",snapshot.child("imageName").getValue().toString());
                 intent.putExtra("imageURL",snapshot.child("imageURL").getValue().toString());
                 intent.putExtra("message",snapshot.child("message").getValue().toString());
@@ -239,39 +230,64 @@ public class SnapActivity extends AppCompatActivity {
 
             }
         });
-    }*/
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_snap);
-       /* mAuth = FirebaseAuth.getInstance();
-
-        setTitle("Snaps");
-        googleSignIn();
-        customList=new ArrayList<>();
-        noSnapTextView=findViewById(R.id.noSnapTextView);
-        buildRecyclerView();
-        fab();
-        Button button=findViewById(R.id.testButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(getApplicationContext(),SnapHomeActivity.class);
-                startActivity(intent);
-
-            }
-        });
-
-
-
-
+    }
+    public void emptyView(){
+        //for empty view
         if(customList.size()==0){
             noSnapTextView.setVisibility(View.VISIBLE);
         }
         else {
             noSnapTextView.setVisibility(View.INVISIBLE);
         }
+    }
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_snap_home);
+
+        Toolbar toolbar=findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawer=findViewById(R.id.drawer_layout);
+
+        ActionBarDrawerToggle toggle=new ActionBarDrawerToggle(this,drawer,toolbar, R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView=findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+
+        mAuth = FirebaseAuth.getInstance();
+        setTitle("Snaps");
+        googleSignIn();
+        customList=new ArrayList<>();
+        noSnapTextView=findViewById(R.id.noSnapTextView);
+        headerEmail=headerView.findViewById(R.id.headerEmail);
+        headerName=headerView.findViewById(R.id.headerName);
+        headerEmail.setText(mAuth.getCurrentUser().getEmail());
+        buildRecyclerView();
+       FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+           public void onDataChange(@NonNull DataSnapshot snapshot) {
+                 headerName.setText(snapshot.child("First Name").getValue().toString() + " " + snapshot.child("Last Name").getValue().toString());
+
+       }
+
+       @Override
+       public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+                fab();
+        emptyView();
+
+
+
 
 
         FirebaseDatabase.getInstance().getReference().child("users").child(mAuth.getCurrentUser().getUid()).child("snaps").addChildEventListener(new ChildEventListener() {
@@ -280,12 +296,7 @@ public class SnapActivity extends AppCompatActivity {
                 snaps.add(snapshot);
                 customList.add(new CustomItem(snapshot.child("fromName").getValue().toString(),snapshot.child("from").getValue().toString()));
                 mAdapter.notifyDataSetChanged();
-                if(customList.size()==0){
-                    noSnapTextView.setVisibility(View.VISIBLE);
-                }
-                else {
-                    noSnapTextView.setVisibility(View.INVISIBLE);
-                }
+                emptyView();
             }
 
             @Override
@@ -303,12 +314,7 @@ public class SnapActivity extends AppCompatActivity {
                         index++;
                     }
                     mAdapter.notifyDataSetChanged();
-                    if(customList.size()==0){
-                        noSnapTextView.setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        noSnapTextView.setVisibility(View.INVISIBLE);
-                    }
+                    emptyView();
 
                 }
             }
@@ -323,37 +329,12 @@ public class SnapActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });*/
-
+        });
 
     }
-}
 
 
-/*
 
-    //for menu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        MenuInflater menuInflater=getMenuInflater();
-        menuInflater.inflate(R.menu.snapmenu,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-         if(item.getItemId()==R.id.logOutBar){
-            //logout user
-            mAuth.signOut();
-            mGoogleSignInClient.signOut();
-           Intent intent=new Intent(this,MainActivity.class);
-           startActivity(intent);
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -389,11 +370,29 @@ public class SnapActivity extends AppCompatActivity {
             }
         }
     }
-
-
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finish();
+        if(drawer.isDrawerOpen(GravityCompat.START)){
+            drawer.closeDrawer(GravityCompat.START);
+        }else {
+            super.onBackPressed();
+            finish();
+        }
     }
-}*/
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.nav_logout:
+                mAuth.signOut();
+                mGoogleSignInClient.signOut();
+                Intent intent=new Intent(this,MainActivity.class);
+                startActivity(intent);
+                break;
+        }
+        drawer.closeDrawer(GravityCompat.START);
+
+        return true;
+    }
+}

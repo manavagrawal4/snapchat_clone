@@ -21,6 +21,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,20 +53,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void signClicked(View view) {
         //check if we can log in
-        mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            logIn();
-                        } else {
+       if(email.getText().toString().equals("")||password.getText().toString().equals("")) {
+           Toast.makeText(this, "Invalid email/password", Toast.LENGTH_SHORT).show();
 
-                            Toast.makeText(MainActivity.this, "Invalid email/password", Toast.LENGTH_SHORT).show();
-                        }
+       }else{
 
-                    }
-                });
+           mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                   .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                       @Override
+                       public void onComplete(@NonNull Task<AuthResult> task) {
+                           if (task.isSuccessful()) {
+                               // Sign in success, update UI with the signed-in user's information
+                               logIn();
+                           } else {
+
+                               Toast.makeText(MainActivity.this, "Invalid email/password", Toast.LENGTH_SHORT).show();
+                           }
+
+                       }
+                   });
+       }
 
     }
     public void resetPass(View view){
@@ -86,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     //for login
     public void logIn() {
         //move to another activity
-        Intent goToSnap = new Intent(this, SnapActivity.class);
+        Intent goToSnap = new Intent(this, SnapHomeActivity.class);
         startActivity(goToSnap);
 
 
@@ -175,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                         String[] Name= account1.getDisplayName().split(" ");
                         map.put("First Name",Name[0]);
                         map.put("Last Name",Name[1]);
-                        FirebaseDatabase.getInstance().getReference().child("users").child(task.getResult().getUser().getUid()).setValue(map);
+                        FirebaseDatabase.getInstance().getReference().child("users").child(task.getResult().getUser().getUid()).updateChildren(map);
                     }
                     //Toast.makeText(MainActivity.this, "signup", Toast.LENGTH_SHORT).show();
                     logIn();

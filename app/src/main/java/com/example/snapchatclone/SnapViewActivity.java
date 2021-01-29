@@ -2,6 +2,7 @@ package com.example.snapchatclone;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,11 +24,11 @@ import java.net.URL;
 
 public class SnapViewActivity extends AppCompatActivity {
 
+
     TextView messageTextView;
     ImageView snapImageView;
     Intent intent;
     FirebaseAuth mAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +46,8 @@ public class SnapViewActivity extends AppCompatActivity {
     }
 
     public void downloadImage() {
+
+
         downloadTask task = new downloadTask();
         Bitmap myImage;
         try {
@@ -57,8 +61,11 @@ public class SnapViewActivity extends AppCompatActivity {
 
 
 
-    public class downloadTask extends AsyncTask<String ,Void, Bitmap>
+    public class downloadTask extends AsyncTask<String ,Integer, Bitmap>
     {
+
+
+
 
         @Override
         protected Bitmap doInBackground(String... urls) {
@@ -80,6 +87,9 @@ public class SnapViewActivity extends AppCompatActivity {
 
 
         }
+
+
+
     }
 
     @Override

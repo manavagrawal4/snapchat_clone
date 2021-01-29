@@ -25,7 +25,7 @@ public class StartupActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if(mAuth.getCurrentUser()!=null){
-                    Intent intent =new Intent(getApplicationContext(),SnapActivity.class);
+                    Intent intent =new Intent(getApplicationContext(),SnapHomeActivity.class);
                     startActivity(intent);
                 }
                 else{

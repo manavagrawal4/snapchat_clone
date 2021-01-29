@@ -13,7 +13,12 @@
         android:roundIcon="@mipmap/snapchat_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StartupActivity"
+        <activity
+            android:name=".SnapHomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".StartupActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,9 +50,14 @@
             android:name=".SnapViewActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".chooseUserActivity" />
-        <activity android:name=".CreateSnapActivity" />
-        <activity android:name=".SnapActivity" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".CreateSnapActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SnapActivity"
+             />
+        <activity android:name=".MainActivity"
+            android:noHistory="true">
 
         </activity>
 
